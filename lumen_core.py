@@ -4,7 +4,7 @@ import requests
 import time
 import sys
 
-"""def send_telegram(message):
+def send_telegram(message):
     try:
         token = os.environ['TELEGRAM_TOKEN']
         chat_id = os.environ['TELEGRAM_CHAT_ID']
@@ -15,7 +15,7 @@ import sys
         return True
     except Exception as e:
         print(f"❌ Error Telegram: {str(e)}", file=sys.stderr)
-        return False"""
+        return False
 
 def main():
     try:
