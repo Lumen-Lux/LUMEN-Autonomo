@@ -4,7 +4,16 @@ import requests
 import time
 import sys
 
+
+
 def send_telegram(message):
+
+    # Asegúrate que el nombre coincide EXACTAMENTE
+    TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')  # Debe coincidir con el nombre en GitHub Secrets
+    
+    if not TELEGRAM_TOKEN:
+    print("❌ Error: TELEGRAM_TOKEN no encontrado en variables de entorno")
+    
     try:
         token = os.environ['TELEGRAM_TOKEN']
         chat_id = os.environ['TELEGRAM_CHAT_ID']
