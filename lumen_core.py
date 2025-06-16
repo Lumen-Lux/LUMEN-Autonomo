@@ -58,7 +58,7 @@ def main():
     test_data = {
         "nombre": "Evento de prueba",
         "fecha": "2023-12-31T23:59:59",
-        "descripcion": "Este es un evento de prueba para validar la conexión"
+        "detalle": "Este es un evento de prueba para validar la conexión"
     }
     
     print("⏳ Intentando inserción de prueba en la tabla 'eventos'...")
