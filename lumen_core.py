@@ -1,5 +1,4 @@
 import os
-import time
 import json
 import http.client
 import ssl
@@ -17,12 +16,35 @@ def main():
     
     print("✅ Variables de entorno verificadas")
     
-    # Extraer host y path de la URL de Supabase
-    supabase_host = SUPABASE_URL.split('//')[1].split('/')[0]
-    supabase_path = '/' + '/'.join(SUPABASE_URL.split('//')[1].split('/')[1:]) + "/rest/v1/eventos"
+    # Parsear la URL de Supabase
+    try:
+        # Eliminar posibles espacios y caracteres inválidos
+        clean_url = SUPABASE_URL.strip()
+        if clean_url.endswith('/'):
+            clean_url = clean_url[:-1]
+            
+        # Extraer componentes de la URL
+        protocol = "https://"
+        base_url = clean_url.replace(protocol, "")
+        host = base_url.split('/')[0]
+        project_path = '/' + '/'.join(base_url.split('/')[1:]) if '/' in base_url else ''
+        
+        # Construir el endpoint completo
+        endpoint = f"{project_path}/rest/v1/eventos"
+        
+        print(f"ℹ️ Supabase Host: {host}")
+        print(f"ℹ️ Endpoint: {endpoint}")
+    
+    except Exception as e:
+        print(f"❌ Error al parsear SUPABASE_URL: {str(e)}")
+        return
     
     # Configurar conexión HTTPS
-    conn = http.client.HTTPSConnection(supabase_host, context=ssl._create_unverified_context())
+    try:
+        conn = http.client.HTTPSConnection(host, context=ssl._create_unverified_context())
+    except Exception as e:
+        print(f"❌ Error al establecer conexión HTTPS: {str(e)}")
+        return
     
     # Encabezados para Supabase
     headers = {
@@ -42,18 +64,25 @@ def main():
     print("⏳ Intentando inserción de prueba en la tabla 'eventos'...")
     
     try:
-        # Realizar la solicitud POST
-        conn.request("POST", supabase_path, body=json.dumps(test_data), headers)
-        response = conn.getresponse()
+        # CORRECCIÓN CLAVE: Usar argumentos de palabra clave correctamente
+        conn.request(
+            method="POST",
+            url=endpoint,
+            body=json.dumps(test_data),
+            headers=headers  # Argumento de palabra clave
+        )
         
-        # Leer y decodificar la respuesta
+        response = conn.getresponse()
+        status = response.status
         response_data = response.read().decode()
         
         # Verificar el código de estado
-        if response.status in [200, 201]:
-            print(f"✅ Inserción exitosa! Respuesta: {response_data}")
+        if status in [200, 201, 204]:
+            print(f"✅ Inserción exitosa! Código: {status}")
+            if response_data:
+                print(f"📄 Respuesta: {response_data}")
         else:
-            print(f"❌ Error en Supabase (Código {response.status}): {response_data}")
+            print(f"❌ Error en Supabase (Código {status}): {response_data}")
     
     except Exception as e:
         print(f"❌ Error durante la conexión: {str(e)}")
@@ -61,6 +90,7 @@ def main():
     finally:
         # Cerrar la conexión
         conn.close()
+        print("🔒 Conexión cerrada")
 
 if __name__ == "__main__":
     main()
