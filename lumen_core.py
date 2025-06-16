@@ -3,6 +3,11 @@ import os
 import time
 
 def main():
+    
+    print("🔍 Verificando variables de entorno...")
+    print("SUPABASE_URL:", bool(os.environ.get('SUPABASE_URL')))
+    print("SUPABASE_KEY:", bool(os.environ.get('SUPABASE_KEY')))
+    
     # Conectar a Supabase
     supabase = create_client(
         os.environ['SUPABASE_URL'],
