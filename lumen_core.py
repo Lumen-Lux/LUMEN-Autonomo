@@ -57,7 +57,7 @@ def main():
     # Datos de prueba para inserción
     test_data = {
         "tipo": "Evento de prueba",
-        "created_at": "2023-12-31T23:59:59",
+        "created_at": datetime.now(),
         "detalle": "Este es un evento de prueba para validar la conexión"
     }
     
